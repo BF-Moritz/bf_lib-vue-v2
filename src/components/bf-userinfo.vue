@@ -40,6 +40,7 @@
 		</span>
 		<span @click="pinMsg" v-if="showPin" class="mdi mdi-pin-outline pin" />
 		<span @click="deleteMsg" v-if="showDelete" class="mdi mdi-delete-circle-outline delete" />
+		<span @click="closeMsg" v-if="showClose" class="mdi mdi-close-circle-outline close" />
 	</div>
 </template>
 
@@ -65,6 +66,10 @@ export default Vue.extend({
 			default: false
 		},
 		showDelete: {
+			type: Boolean,
+			default: false
+		},
+		showClose: {
 			type: Boolean,
 			default: false
 		},
@@ -121,6 +126,10 @@ export default Vue.extend({
 
 		deleteMsg() {
 			this.$emit('delete');
+		},
+
+		closeMsg() {
+			this.$emit('close');
 		}
 	}
 });
@@ -158,7 +167,8 @@ export default Vue.extend({
 	}
 
 	.pin,
-	.delete {
+	.delete,
+	.close {
 		margin-left: 5px;
 		margin-bottom: 3px;
 		width: auto;

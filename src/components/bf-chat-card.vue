@@ -18,11 +18,13 @@
 				:team="message.user.team"
 				:showPin="showPin"
 				:showDelete="showDelete"
+				:showClose="showClose"
 				:color="color"
 				:time="parsedTime"
 				:id="message.user._id"
 				@pin="pinMsg"
 				@delete="deleteMsg"
+				@close="closeMsg"
 			/>
 			<div class="content">
 				{{ message.message.message }}
@@ -47,6 +49,9 @@ export default Vue.extend({
 			type: Boolean
 		},
 		showDelete: {
+			type: Boolean
+		},
+		showClose: {
 			type: Boolean
 		},
 		color: {
@@ -85,6 +90,9 @@ export default Vue.extend({
 		},
 		deleteMsg(msg: any) {
 			this.$emit('del', { message: this.$props.message });
+		},
+		closeMsg(msg: any) {
+			this.$emit('close', { message: this.$props.message });
 		}
 	}
 });
@@ -106,7 +114,6 @@ export default Vue.extend({
 	min-height: 10px;
 	grid-template-columns: 70px 1fr;
 	min-width: 410px;
-	-webkit-app-region: no-drag;
 	overflow: hidden;
 
 	.avatar {
