@@ -36,21 +36,22 @@
 </template>
 
 <script lang="ts">
-import BfChatCard from '@/components/bf-chat-card';
+import BfChatCard from '@/components/bf-chat-card.vue';
+import { MessageDBInterface, MessageWrapper } from '@/interfaces/message';
 import Vue from 'vue';
 
-export default {
+export default Vue.extend({
 	name: 'bf-chat',
 	data() {
 		return {
-			messages: [],
-			ws: null,
+			messages: [] as MessageDBInterface[],
+			ws: null as WebSocket | null,
 			settings: {},
-			observer: null,
+			observer: null as IntersectionObserver | null,
 			accounts: [],
 			selectedAccount: '',
 			chatTextVal: '',
-			popup: null,
+			popup: null as Window | null,
 			showDeleted: true
 		};
 	},
@@ -60,25 +61,25 @@ export default {
 	},
 	computed: {},
 	methods: {
-		send(data) {
-			this.ws.send(JSON.stringify(data));
-			console.log('hi', data);
+		send(data: any) {
+			this.ws?.send(JSON.stringify(data));
 		},
 
-		addMessages(messages) {
-			const height = getComputedStyle(this.$refs.chatWrapper, null).height;
+		addMessages(messages: MessageWrapper) {
+			const height = getComputedStyle(this.$refs.chatWrapper as Element, null).height;
 			const isOnBottom =
-				this.$refs.chatWrapper.scrollTop + +height.slice(0, -2) + 10 >= this.$refs.chatWrapper.scrollHeight;
+				(this.$refs.chatWrapper as Element).scrollTop + +height.slice(0, -2) + 10 >=
+				(this.$refs.chatWrapper as Element).scrollHeight;
 			this.messages = [...this.messages, ...messages.messages].sort((a, b) => a.index - b.index);
 			if (isOnBottom) {
 				Vue.nextTick(() => {
-					this.$refs.chatWrapper.lastElementChild.scrollIntoView(true);
+					(this.$refs.chatWrapper as Element).lastElementChild?.scrollIntoView(true);
 				});
 				this.unloadOldMessages();
 			}
 		},
 
-		async handleIntersect(entries) {
+		async handleIntersect(entries: IntersectionObserverEntry[]) {
 			if (entries[0].isIntersecting) {
 				const id = this.messages[0].index;
 				if (id > 0) {
@@ -96,15 +97,16 @@ export default {
 
 		unloadOldMessages() {
 			if (this.messages.length > 100) {
-				this.observer.unobserve(this.$refs.chatWrapper.firstElementChild);
+				this.observer?.unobserve((this.$refs.chatWrapper as Element).firstElementChild!);
 				this.messages = this.messages.slice(-100);
+
 				Vue.nextTick(() => {
-					this.observer.observe(this.$refs.chatWrapper.firstElementChild);
+					this.observer?.observe((this.$refs.chatWrapper as Element).firstElementChild!);
 				});
 			}
 		},
 
-		selectAccount(account) {
+		selectAccount(account: string) {
 			this.selectedAccount = account;
 		},
 
@@ -120,18 +122,18 @@ export default {
 			this.chatTextVal = '';
 		},
 
-		pin(message) {
-			if (this.popup) this.popup.close();
+		pin(message: MessageDBInterface) {
+			this.popup?.close();
 			const url = `${location.origin}/#/popup?message=${encodeURIComponent(JSON.stringify(message))}`;
 			this.popup = window.open(
 				url,
 				'pop-up',
 				'width=600,height=100,status=no,scrollbars=no,resizable=off,location=off'
 			);
-			this.popup.focus;
+			this.popup?.focus;
 		},
 
-		del(message) {
+		del(message: MessageDBInterface) {
 			this.send({
 				method: 'POST',
 				type: 'action',
@@ -190,11 +192,13 @@ export default {
 						switch (data.type) {
 							case 'messages':
 								if (this.messages.length > 0) {
-									this.observer.unobserve(this.$refs.chatWrapper.firstElementChild);
+									this.observer?.unobserve((this.$refs.chatWrapper as Element).firstElementChild!);
 								}
+
 								this.addMessages(data.params);
+
 								Vue.nextTick(() => {
-									this.observer.observe(this.$refs.chatWrapper.firstElementChild);
+									this.observer?.observe((this.$refs.chatWrapper as Element).firstElementChild!);
 								});
 								break;
 						}
@@ -215,12 +219,12 @@ export default {
 		};
 
 		Vue.nextTick(() => {
-			this.$refs.chatWrapper.addEventListener('scroll', () => {
+			(this.$refs.chatWrapper as Element)?.addEventListener('scroll', () => {
 				if (this.$refs.chatWrapper) {
-					const height = getComputedStyle(this.$refs.chatWrapper, null).height;
+					const height = getComputedStyle((this.$refs.chatWrapper as Element)!, null).height;
 					const isOnBottom =
-						this.$refs.chatWrapper.scrollTop + +height.slice(0, -2) + 10 >=
-						this.$refs.chatWrapper.scrollHeight;
+						(this.$refs.chatWrapper as Element).scrollTop + +height.slice(0, -2) + 10 >=
+						(this.$refs.chatWrapper as Element).scrollHeight;
 					if (isOnBottom) {
 						this.unloadOldMessages();
 					}
@@ -228,88 +232,100 @@ export default {
 			});
 		});
 	}
-};
+});
 </script>
 
-<style lang="stylus" scoped>
-.chat-container
-	overflow: hidden
+<style lang="scss" scoped>
+.chat-container {
+	overflow: hidden;
 
-	.chat-wrapper
-		height calc(100% - 36px)
-		width calc(100% - 4px)
-		overflow-y scroll
-		background-color: #18202b
-		margin: 2px
+	.chat-wrapper {
+		height: calc(100% - 36px);
+		width: calc(100% - 4px);
+		overflow-y: scroll;
+		background-color: #18202b;
+		margin: 2px;
 
-		.chat
-			margin 4px
+		.chat {
+			margin: 4px;
+		}
+	}
 
-	.chat-input-container
-		height 32px
-		background-color: #18202b
-		margin 0 2px
+	.chat-input-container {
+		height: 32px;
+		background-color: #18202b;
+		margin: 0 2px;
 
-		form
-			margin: 0
-			width: 100%
-			color: white
-			height 100%
+		form {
+			margin: 0;
+			width: 100%;
+			color: white;
+			height: 100%;
 
-			*:focus
-				outline: none
+			*:focus {
+				outline: none;
+			}
 
-			#select-current-account
-				position: fixed
-				font-size: 24px
-				line-height: 26px
-				transition: 0.3s
-				transition-timing-function: cubic-bezier(0.25, 0, 0.75, 1)
-				width: 150px
-				height: 32px
-				opacity: 1
-				cursor: pointer
-				display: inline-block
+			#select-current-account {
+				position: fixed;
+				font-size: 24px;
+				line-height: 26px;
+				transition: 0.3s;
+				transition-timing-function: cubic-bezier(0.25, 0, 0.75, 1);
+				width: 150px;
+				height: 32px;
+				opacity: 1;
+				cursor: pointer;
+				display: inline-block;
 
-				#selector
-					width: 140px
-					margin: 0
-					padding: 0 0 0 10px
-					border: none
-					height: 100%
-					background-color: rgba(11, 16, 19, 0.8)
+				#selector {
+					width: 140px;
+					margin: 0;
+					padding: 0 0 0 10px;
+					border: none;
+					height: 100%;
+					background-color: rgba(11, 16, 19, 0.8);
+				}
 
-				#selector-content
-					display: none
-					position: fixed
-					z-index: 1
-					width: 150px
+				#selector-content {
+					display: none;
+					position: fixed;
+					z-index: 1;
+					width: 150px;
 
-					div
-						padding: 5px 10px
-						display: block
-						background-color: rgba(11, 16, 19, 0.8)
+					div {
+						padding: 5px 10px;
+						display: block;
+						background-color: rgba(11, 16, 19, 0.8);
+					}
 
-					div.active
-						color: #0193de
+					div.active {
+						color: #0193de;
+					}
+				}
+			}
 
-			#select-current-account:hover #selector-content
+			#select-current-account:hover #selector-content {
 				display: block;
+			}
 
-			#select-current-account:hover #selector
+			#select-current-account:hover #selector {
 				color: #5bc6f4;
+			}
 
-			#input-field
-				width: calc(100% - 175px)
-				margin: 0 0 0 155px
-				padding: 0 10px
-				border: none
-				height: 100%
-				background-color: rgba(11, 16, 19, 0.8)
-				color: white
-				font-size: 24px
-
-
+			#input-field {
+				width: calc(100% - 175px);
+				margin: 0 0 0 155px;
+				padding: 0 10px;
+				border: none;
+				height: 100%;
+				background-color: rgba(11, 16, 19, 0.8);
+				color: white;
+				font-size: 24px;
+			}
+		}
+	}
+}
 
 #selector-content div:hover {
 	color: #5bc6f4;

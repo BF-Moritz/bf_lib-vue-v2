@@ -1,15 +1,31 @@
 <template>
-	<div class="chat-card"></div>
+	<div class="activity"></div>
 </template>
 
 <script lang="ts">
-export default {
+import Vue, { PropType } from 'vue';
+import { ActivityType } from '@/interfaces/activity';
+
+export default Vue.extend({
 	name: 'bf-activity',
-	props: {},
+	props: {
+		type: {
+			type: String as PropType<ActivityType>,
+			required: true
+		}
+	},
 	components: {},
 	computed: {},
 	methods: {}
-};
+});
 </script>
 
-<style lang="stylus" scoped></style>
+<style lang="scss" scoped></style>
+
+<docs>
+## Expamle
+
+```jsx
+<bf-activity type="test" />
+```
+</docs>

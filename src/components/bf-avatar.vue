@@ -5,7 +5,9 @@
 </template>
 
 <script lang="ts">
-export default {
+import Vue from 'vue';
+
+export default Vue.extend({
 	name: 'bf-avatar',
 	props: {
 		imgSrc: {
@@ -25,17 +27,17 @@ export default {
 			default: '50px'
 		}
 	}
-};
+});
 </script>
 
-<style lang="stylus" scoped mo>
+<style lang="scss" scoped>
 .avatar {
-    img {
-        width: var(--size);
-        height: var(--size);
-        border-radius: 50%;
-        border: solid 2px var(--borderColor);
-    }
+	img {
+		width: var(--size);
+		height: var(--size);
+		border-radius: 50%;
+		border: solid 2px var(--borderColor);
+	}
 }
 </style>
 

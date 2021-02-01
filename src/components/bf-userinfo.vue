@@ -26,6 +26,7 @@
 			integrity="sha512-D0B6cFS+efdzUE/4wh5XF5599DtW7Q1bZOjAYGBfC0Lg9WjcrqPXZto020btDyrlDUrfYKsmzFvgf/9AB8J0Jw=="
 			crossorigin="anonymous"
 		/>
+		<link href="https://cdn.materialdesignicons.com/5.3.45/css/materialdesignicons.min.css" rel="stylesheet" />
 		<img v-for="badge in resolvedBadges" :key="badge.name" class="badge" :alt="badge.name" :src="badge.url" />
 		<span :class="['name', `id-${id}`]" wfd-id="72">
 			{{ name }}
@@ -37,22 +38,19 @@
 		<span class="time" wfd-id="71">
 			{{ time }}
 		</span>
-		<span @click="pinMsg">
-			<SvgIcon v-if="showPin" type="mdi" :path="pinIcon" class="pin" />
-		</span>
-		<span @click="deleteMsg">
-			<SvgIcon v-if="showDelete" type="mdi" :path="deleteIcon" class="delete" />
-		</span>
+		<span @click="pinMsg" v-if="showPin" class="mdi mdi-pin-outline pin" />
+		<span @click="deleteMsg" v-if="showDelete" class="mdi mdi-delete-circle-outline delete" />
 	</div>
 </template>
 
 <script lang="ts">
 import resolveBadges from '@/utils/resolveBadges';
-import SvgIcon from '@jamescoyle/vue-icon';
 import * as mdiIcons from '@mdi/js';
-import camelCaser from '@/utils/camelCaser';
 
-export default {
+import Vue from 'vue';
+import { ParsedBadgeInterface } from '@/interfaces/badges';
+
+export default Vue.extend({
 	name: 'bf-userinfo',
 	props: {
 		name: {
@@ -102,25 +100,22 @@ export default {
 	},
 	data: () => {
 		return {
-			resolvedBadges: []
+			resolvedBadges: [] as ParsedBadgeInterface[]
 		};
 	},
 	async created() {
 		this.resolvedBadges = await resolveBadges(this.$props.badges, '118863395');
 	},
-	components: {
-		SvgIcon
-	},
 	computed: {
 		deleteIcon() {
-			return mdiIcons[camelCaser('mdiDeleteCircleOutline')];
+			return mdiIcons['mdiDeleteCircleOutline'];
 		},
 		pinIcon() {
-			return mdiIcons[camelCaser('mdi-pin-outline')];
+			return mdiIcons['mdiPinOutline'];
 		}
 	},
 	methods: {
-		pinMsg(event) {
+		pinMsg(event: any) {
 			this.$emit('pin');
 		},
 
@@ -128,10 +123,10 @@ export default {
 			this.$emit('delete');
 		}
 	}
-};
+});
 </script>
 
-<style lang="stylus" scoped>
+<style lang="scss" scoped>
 .userinfo {
 	--color: inherit;
 	--delete-hover-color: red;
@@ -139,7 +134,7 @@ export default {
 	--font: Lato;
 	display: flex;
 	font-size: 24px;
-	font-family: var(--font)
+	font-family: var(--font);
 
 	.badge {
 		width: auto;
@@ -162,27 +157,29 @@ export default {
 		font-size: 14px;
 	}
 
-	.pin, .delete {
+	.pin,
+	.delete {
 		margin-left: 5px;
 		margin-bottom: 3px;
 		width: auto;
 		height: 18px;
 		border-radius: 50%;
+		font-size: 18px;
 		color: var(--color);
 		cursor: pointer;
 		-webkit-app-region: no-drag;
 	}
 
 	.pin {
-		transform: rotateZ(45deg)
+		transform: rotateZ(45deg);
 	}
 
 	.pin:hover {
-		color: var(--pin-hover-color)
+		color: var(--pin-hover-color);
 	}
 
 	.delete:hover {
-		color: var(--delete-hover-color)
+		color: var(--delete-hover-color);
 	}
 
 	.country {

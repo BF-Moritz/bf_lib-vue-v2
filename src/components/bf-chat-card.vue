@@ -32,11 +32,12 @@
 </template>
 
 <script lang="ts">
-import BfAvatar from '@/components/bf-avatar';
-import BfUserinfo from '@/components/bf-userinfo';
+import Vue from 'vue';
+import BfAvatar from '@/components/bf-avatar.vue';
+import BfUserinfo from '@/components/bf-userinfo.vue';
 import { convertTimestampToString } from '@/utils/timeParser';
 
-export default {
+export default Vue.extend({
 	name: 'bf-chat-card',
 	props: {
 		message: {
@@ -80,26 +81,26 @@ export default {
 	},
 	methods: {
 		pinMsg(msg: any) {
-			this.$emit('pin', { message: this.message });
+			this.$emit('pin', { message: this.$props.message });
 		},
 		deleteMsg(msg: any) {
-			this.$emit('del', { message: this.message });
+			this.$emit('del', { message: this.$props.message });
 		}
 	}
-};
+});
 </script>
 
-<style lang="stylus" scoped>
+<style lang="scss" scoped>
 .chat-card {
-    --font-family: Lato;
-    --background-color: rgba(11, 16, 19, 0.8);
-    --color: white;
-    --border-radius: 15px;
+	--font-family: Lato;
+	--background-color: rgba(11, 16, 19, 0.8);
+	--color: white;
+	--border-radius: 15px;
 
-    font-family: var(--font-family);
-    background-color: var(--background-color);
-    color: var(--color);
-    display: grid;
+	font-family: var(--font-family);
+	background-color: var(--background-color);
+	color: var(--color);
+	display: grid;
 	// width: 100%;
 	border-radius: var(--border-radius);
 	min-height: 10px;
@@ -108,13 +109,13 @@ export default {
 	-webkit-app-region: no-drag;
 	overflow: hidden;
 
-    .avatar {
-        margin: 10px;
-    }
+	.avatar {
+		margin: 10px;
+	}
 
-    .header {
-        margin: 6px 10px 5px 5px;
-    }
+	.header {
+		margin: 6px 10px 5px 5px;
+	}
 
 	.content {
 		margin: 0 10px 5px 5px;
