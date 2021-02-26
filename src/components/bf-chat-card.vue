@@ -25,6 +25,7 @@
 				@pin="pinMsg"
 				@delete="deleteMsg"
 				@close="closeMsg"
+				:hasBirthday="hasBirthday"
 			/>
 			<div class="content">
 				{{ message.message.message }}
@@ -34,16 +35,18 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import BfAvatar from '@/components/bf-avatar.vue';
 import BfUserinfo from '@/components/bf-userinfo.vue';
 import { convertTimestampToString } from '@/utils/timeParser';
+import { MessageDBInterface } from '@/interfaces/message';
 
 export default Vue.extend({
 	name: 'bf-chat-card',
 	props: {
 		message: {
-			type: Object
+			type: Object as PropType<MessageDBInterface>,
+			required: true
 		},
 		showPin: {
 			type: Boolean
@@ -81,7 +84,12 @@ export default Vue.extend({
 	},
 	computed: {
 		parsedTime() {
-			return convertTimestampToString(this.$props.message.date);
+			return convertTimestampToString(this.message.date);
+		},
+		hasBirthday(): boolean {
+			const bd = (this.message as MessageDBInterface).user?.birthday;
+			const today = new Date();
+			return !!bd && bd.month === today.getMonth() + 1 && bd.day === today.getDate();
 		}
 	},
 	methods: {

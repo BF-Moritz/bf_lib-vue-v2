@@ -1,5 +1,5 @@
 <template>
-	<div id="app">
+	<div id="app" :style="{ '--body-bg-color': showBG ? '#0193de' : 'transparent' }">
 		<div id="nav" v-if="showNav">
 			<router-link :to="{ name: 'home' }">
 				<div class="header-btns">Home</div>
@@ -33,13 +33,14 @@ body {
 	padding: 0;
 	width: 100vw;
 	height: 100vh;
-	background-color: #0193de;
 	overflow: hidden;
 }
 #app {
+	--body-bg-color: #0193de;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+	background-color: var(--body-bg-color);
 
 	#nav {
 		height: 32px;
@@ -145,7 +146,10 @@ body {
 import Vue from 'vue';
 export default Vue.extend({
 	data() {
-		return {};
+		return {
+			hideNavArr: ['popup', 'Overlays.Coding'] as string[],
+			hideBGArr: ['Overlays.Coding'] as string[]
+		};
 	},
 
 	methods: {
@@ -164,7 +168,13 @@ export default Vue.extend({
 		},
 
 		showNav() {
-			return this.$route.name !== 'popup';
+			console.log(this.$route.name);
+
+			return !this.$data.hideNavArr.includes(this.$route.name);
+		},
+
+		showBG() {
+			return !this.$data.hideBGArr.includes(this.$route.name);
 		}
 	}
 });

@@ -35,6 +35,7 @@
 		<span v-if="team" class="team">
 			<i :class="['team-badge', 'fab', `fa-${team}`]" />
 		</span>
+		<span v-if="hasBirthday" class="mdi mdi-cake" :style="birthdayColor" />
 		<span class="time" wfd-id="71">
 			{{ time }}
 		</span>
@@ -101,6 +102,14 @@ export default Vue.extend({
 		},
 		id: {
 			type: String
+		},
+		hasBirthday: {
+			type: Boolean,
+			default: false
+		},
+		birthdayColor: {
+			type: String,
+			default: 'color: rgb(51, 196, 61)'
 		}
 	},
 	data: () => {
