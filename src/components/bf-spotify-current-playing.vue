@@ -1,12 +1,14 @@
 <template>
 	<div id="playing-wrapper">
+		<div class="bg-image" :style="{ backgroundImage: `url(${image.url})` }" />
 		<div class="album-cover">
 			<img class="image" v-if="info !== null" :src="image.url" alt="album cover" />
 			<div class="image-missing" v-else>404</div>
 		</div>
 		<div class="info-wrapper">
-			<div class="name">{{ name }}</div>
-			<div class="artists">{{ artists }}</div>
+			<span class="name">{{ name || 'nix' }}</span>
+			<div class="line" />
+			<span class="artists">{{ artists || 'niemandem' }}</span>
 		</div>
 	</div>
 </template>
@@ -86,8 +88,6 @@ export default Vue.extend({
 						switch (data.type) {
 							case 'spotify':
 								this.info = data.params.info;
-								console.log(this.info);
-
 								break;
 						}
 						break;
@@ -115,19 +115,40 @@ export default Vue.extend({
 	height: 80px;
 	width: fit-content;
 	box-sizing: border-box;
+	padding: 5px;
+	border-radius: 15px;
+	overflow: hidden;
+
+	.bg-image {
+		width: calc(100% + 20px);
+		height: calc(100% + 20px);
+		position: absolute;
+		background-color: black;
+		z-index: -1;
+		left: -10px;
+		top: -10px;
+		filter: blur(5px) saturate(0.5) brightness(0.4);
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: cover;
+		opacity: 0.8;
+	}
 
 	.album-cover {
 		background-color: rgba($color: #000000, $alpha: 0.8);
-		border: solid 1px rgb(220, 220, 220);
-		width: 80px;
-		height: 80px;
-		padding: 5px;
+		// border: solid 1px rgb(220, 220, 220);
+		width: 70px;
+		height: 70px;
+		box-shadow: 0 0 2px black;
 		box-sizing: border-box;
+		border-radius: 10px;
+		overflow: hidden;
 
 		.image,
 		.image-missing {
 			width: 100%;
 			height: 100%;
+			border-radius: 5px;
 		}
 
 		.image-missing {
@@ -141,26 +162,25 @@ export default Vue.extend({
 	}
 
 	.info-wrapper {
-		padding: 5px;
+		padding: 0px 15px 0 10px;
 		box-sizing: border-box;
+		color: rgb(220, 220, 220);
+
+		.line {
+			background-color: rgb(220, 220, 220);
+			height: 1px;
+			margin: 5px 0;
+		}
 
 		.name,
 		.artists {
-			background-color: rgba($color: #000000, $alpha: 0.8);
-			border: solid 1px rgb(220, 220, 220);
 			width: fit-content;
+			display: block;
 			margin: 0;
-			padding: 0 5px;
-			display: flex;
-			height: 30px;
+			padding-right: 15px;
 			align-items: center;
-			color: rgb(220, 220, 220);
 			font-weight: 700;
-		}
-
-		.artists {
-			margin-top: 5px;
-			font-weight: 400;
+			font-size: 18px;
 		}
 	}
 }
