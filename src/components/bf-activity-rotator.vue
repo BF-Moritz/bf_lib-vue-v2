@@ -1,16 +1,16 @@
 <template>
 	<div class="activity">
-		<div v-if="type === 'cheer'">
-			<span class="data">Latest Cheer: {{ cheerData.name }} ({{ cheerData.amount }} Bits)</span>
+		<div :class="{ data: true, show: type === 'cheer' }">
+			<span>Latest Cheer: {{ cheerData.name }} ({{ cheerData.amount }} Bits)</span>
 		</div>
-		<div v-else-if="type === 'subscription'">
-			<span class="data">Latest Sub: {{ subData.name }}{{ compSubNumber }} </span>
+		<div :class="{ data: true, show: type === 'subscription' }">
+			<span>Latest Sub: {{ subData.name }}{{ compSubNumber }} </span>
 		</div>
-		<div v-else-if="type === 'donation'">
-			<span class="data">Latest Donation: {{ donationData.name }}: {{ donationData.amount }}€ </span>
+		<div :class="{ data: true, show: type === 'donation' }">
+			<span>Latest Donation: {{ donationData.name }}: {{ donationData.amount }}€ </span>
 		</div>
-		<div v-else-if="type === 'follow'">
-			<span class="data">Latest Follow: {{ followData.name }}</span>
+		<div :class="{ data: true, show: type === 'follow' }">
+			<span>Latest Follow: {{ followData.name }}</span>
 		</div>
 	</div>
 </template>
@@ -67,6 +67,21 @@ export default Vue.extend({
 	color: rgb(220, 220, 220);
 	font-family: 'Lato';
 	font-size: 24px;
+	.data {
+		position: absolute;
+		display: block;
+		bottom: 0;
+		right: 0;
+		transition: all 0.5s;
+		transform: translateY(100px);
+		width: 500px;
+		opacity: 0;
+	}
+
+	.show {
+		transform: translateX(0);
+		opacity: 1;
+	}
 }
 </style>
 
