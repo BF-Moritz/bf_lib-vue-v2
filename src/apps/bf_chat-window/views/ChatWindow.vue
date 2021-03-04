@@ -78,6 +78,10 @@ import BfChatCard from '@/components/bf-chat-card.vue';
 import { ChatWindowSettingsInterface } from '@/interfaces/settings';
 import { MessageDBInterface } from '@/interfaces/message';
 import { remote } from 'electron';
+import { sleep } from '@/utils/sleep';
+
+const serverPort = 5000;
+const serverAdress = '192.168.0.211';
 
 export default Vue.extend({
 	components: {
@@ -92,8 +96,6 @@ export default Vue.extend({
 		};
 	},
 	mounted() {
-		const serverPort = 5000;
-		const serverAdress = '192.168.0.211';
 		this.ws = new WebSocket(`ws://${serverAdress}:${serverPort}/ws`);
 
 		this.ws.onopen = () => {
@@ -137,6 +139,14 @@ export default Vue.extend({
 			} catch (err) {
 				console.error(err);
 			}
+		};
+
+		this.ws.onclose = async () => {
+			this.$router.go(0);
+		};
+		this.ws.onerror = (err) => {
+			console.error('error', err);
+			this.$router.go(0);
 		};
 	},
 
