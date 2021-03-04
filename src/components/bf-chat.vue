@@ -38,6 +38,8 @@
 <script lang="ts">
 import BfChatCard from '@/components/bf-chat-card.vue';
 import { MessageDBInterface, MessageWrapper } from '@/interfaces/message';
+import { BTTVGlobalEmotesInterface, BTTVUserEmotesInterface } from '@/interfaces/bttv';
+import { BTTVStore } from '@/stores/bttv.store';
 import Vue from 'vue';
 
 export default Vue.extend({
@@ -52,7 +54,9 @@ export default Vue.extend({
 			selectedAccount: '',
 			chatTextVal: '',
 			popup: null as Window | null,
-			showDeleted: true
+			showDeleted: true,
+			bttvGlobalEmotes: [] as BTTVGlobalEmotesInterface[],
+			bttvUserEmotes: null as null | BTTVUserEmotesInterface
 		};
 	},
 	props: {},
@@ -181,6 +185,10 @@ export default Vue.extend({
 						this.settings = data.params.settings;
 						this.accounts = data.params.settings.twitchAccounts;
 						this.selectedAccount = data.params.settings.twitchAccounts[0];
+						this.bttvGlobalEmotes = data.params.settings.bttvGlobalEmotes;
+						this.bttvUserEmotes = data.params.settings.bttvUserEmotes as BTTVUserEmotesInterface;
+						BTTVStore.setEmotes(this.bttvGlobalEmotes, this.bttvUserEmotes);
+
 						this.send({
 							method: 'GET',
 							type: 'messages',
@@ -191,7 +199,7 @@ export default Vue.extend({
 					case 'POST':
 						switch (data.type) {
 							case 'messages':
-								if (this.messages.length > 0) {
+								if (this.messages.length > 0 && this.$refs.chatWrapper) {
 									this.observer?.unobserve((this.$refs.chatWrapper as Element).firstElementChild!);
 								}
 

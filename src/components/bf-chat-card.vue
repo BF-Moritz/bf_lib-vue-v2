@@ -27,9 +27,7 @@
 				@close="closeMsg"
 				:hasBirthday="hasBirthday"
 			/>
-			<div class="content">
-				{{ message.message.message }}
-			</div>
+			<div class="content" ref="message-content" />
 		</div>
 	</div>
 </template>
@@ -40,6 +38,8 @@ import BfAvatar from '@/components/bf-avatar.vue';
 import BfUserinfo from '@/components/bf-userinfo.vue';
 import { convertTimestampToString } from '@/utils/timeParser';
 import { MessageDBInterface } from '@/interfaces/message';
+import { emotesInterface } from '@/interfaces/emotes';
+import { BTTVStore } from '@/stores/bttv.store';
 
 export default Vue.extend({
 	name: 'bf-chat-card',
@@ -82,6 +82,11 @@ export default Vue.extend({
 		BfAvatar,
 		BfUserinfo
 	},
+
+	mounted() {
+		const div = this.$refs['message-content'] as HTMLDivElement;
+		this.addMessage(div);
+	},
 	computed: {
 		parsedTime() {
 			return convertTimestampToString(this.message.date);
@@ -93,6 +98,80 @@ export default Vue.extend({
 		}
 	},
 	methods: {
+		addMessage(div: HTMLDivElement) {
+			const message = document.createElement('span');
+			const emotesArr: emotesInterface[] = [];
+			for (const key in this.message.message.emotes) {
+				if (Object.prototype.hasOwnProperty.call(this.message.message.emotes, key)) {
+					const element = this.message.message.emotes[key];
+					element.forEach((e) => {
+						const [start, end] = e.split('-').map((v) => +v);
+						emotesArr.push({
+							id: key,
+							start,
+							end
+						});
+					});
+				}
+			}
+
+			emotesArr.sort((a, b) => a.start - b.start);
+			let offset = 0;
+			const bttvEmotes = BTTVStore.getEmotes();
+			emotesArr.forEach((emote) => {
+				if (emote.start - offset > 0) {
+					// hier
+					const text = this.message.message.message.substring(offset + 1, emote.start);
+					let string = '';
+					text.split(' ').map((word) => {
+						if (bttvEmotes.has(word)) {
+							const el = document.createElement('span');
+							el.innerText = string + ' ';
+							message.append(el);
+							const image = document.createElement('img');
+							image.src = `https://cdn.betterttv.net/emote/${bttvEmotes.get(word)?.id}/3x`;
+							message.append(image);
+							string = '';
+						} else {
+							string += ' ' + word;
+						}
+					});
+					const el = document.createElement('span');
+					el.innerText = string + ' ';
+					message.append(el);
+				}
+				const image = document.createElement('img');
+				image.src = `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/1.0`;
+				message.append(image);
+				offset = emote.end;
+			});
+			if (emotesArr.length <= 0) {
+				// hier
+				const text = this.message.message.message;
+				let string = '';
+				text.split(' ').map((word, i) => {
+					if (bttvEmotes.has(word)) {
+						const el = document.createElement('span');
+						el.innerText = string + ' ';
+						message.append(el);
+						console.log(bttvEmotes.get(word));
+
+						const image = document.createElement('img');
+						image.src = `https://cdn.betterttv.net/emote/${bttvEmotes.get(word)?.id}/3x`;
+						message.append(image);
+						string = '';
+					} else {
+						string += i > 0 ? ' ' + word : word;
+					}
+				});
+				const el = document.createElement('span');
+				el.innerText = string;
+				message.append(el);
+			}
+
+			div.appendChild(message);
+		},
+
 		pinMsg(msg: any) {
 			this.$emit('pin', { message: this.$props.message });
 		},

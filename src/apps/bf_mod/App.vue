@@ -168,8 +168,6 @@ export default Vue.extend({
 		},
 
 		showNav() {
-			console.log(this.$route.name);
-
 			return !this.$data.hideNavArr.includes(this.$route.name);
 		},
 

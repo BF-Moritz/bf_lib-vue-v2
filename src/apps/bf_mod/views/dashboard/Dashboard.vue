@@ -46,7 +46,6 @@ export default Vue.extend({
 				if (typeof event.data !== 'string') return;
 				const data = JSON.parse(event.data);
 
-				console.log(data);
 				if (!data.method) return;
 
 				switch (data.method) {
