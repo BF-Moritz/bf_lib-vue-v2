@@ -118,6 +118,8 @@ export default Vue.extend({
 			emotesArr.sort((a, b) => a.start - b.start);
 			let offset = 0;
 			const bttvEmotes = BTTVStore.getEmotes();
+			console.log([...bttvEmotes]);
+
 			emotesArr.forEach((emote) => {
 				if (emote.start - offset > 0) {
 					// hier
