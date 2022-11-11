@@ -41,6 +41,8 @@ import { MessageDBInterface } from '@/interfaces/message';
 import { emotesInterface } from '@/interfaces/emotes';
 import { BTTVStore } from '@/stores/bttv.store';
 
+const imageStyleHeight = '20px';
+
 export default Vue.extend({
 	name: 'bf-chat-card',
 	props: {
@@ -100,6 +102,7 @@ export default Vue.extend({
 	methods: {
 		addMessage(div: HTMLDivElement) {
 			const message = document.createElement('span');
+			message.style.display = 'flex';
 			const emotesArr: emotesInterface[] = [];
 			for (const key in this.message.message.emotes) {
 				if (Object.prototype.hasOwnProperty.call(this.message.message.emotes, key)) {
@@ -120,8 +123,7 @@ export default Vue.extend({
 			const bttvEmotes = BTTVStore.getEmotes();
 			emotesArr.forEach((emote) => {
 				if (emote.start - offset > 0) {
-					// hier
-					const text = this.message.message.message.substring(offset + 1, emote.start);
+					const text = this.message.message.message.substring(offset, emote.start);
 					let string = '';
 					text.split(' ').map((word) => {
 						if (bttvEmotes.has(word)) {
@@ -130,6 +132,7 @@ export default Vue.extend({
 							message.append(el);
 							const image = document.createElement('img');
 							image.src = `https://cdn.betterttv.net/emote/${bttvEmotes.get(word)?.id}/3x`;
+							image.style.height = imageStyleHeight;
 							message.append(image);
 							string = '';
 						} else {
@@ -137,13 +140,14 @@ export default Vue.extend({
 						}
 					});
 					const el = document.createElement('span');
-					el.innerText = string + ' ';
+					el.innerText = string + '';
 					message.append(el);
 				}
 				const image = document.createElement('img');
-				image.src = `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/1.0`;
+				image.src = `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/3.0`;
+				image.style.height = imageStyleHeight;
 				message.append(image);
-				offset = emote.end;
+				offset = emote.end + 1;
 			});
 			if (emotesArr.length <= 0) {
 				// hier
@@ -158,6 +162,7 @@ export default Vue.extend({
 
 						const image = document.createElement('img');
 						image.src = `https://cdn.betterttv.net/emote/${bttvEmotes.get(word)?.id}/3x`;
+						image.style.height = imageStyleHeight;
 						message.append(image);
 						string = '';
 					} else {

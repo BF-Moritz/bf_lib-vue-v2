@@ -8,5 +8,8 @@ module.exports = {
 			nodeIntegration: true,
 			nativeWindowOpen: true
 		}
+	},
+	devServer: {
+		port: 5100
 	}
 };

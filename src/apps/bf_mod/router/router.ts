@@ -5,6 +5,7 @@ import Dashboard from '../views/dashboard/Dashboard.vue';
 import Popup from '../views/popup/Popup.vue';
 import Auth from '../views/auth/Auth.vue';
 import Overlays from '../views/overlays/Overlays.vue';
+import API from '../views/api/API.vue';
 import Start from '../views/overlays/views/Start.vue';
 import Coding from '../views/overlays/views/Coding.vue';
 
@@ -45,6 +46,11 @@ const routes = [
 		path: '/overlays/coding',
 		name: 'Overlays.Coding',
 		component: Coding
+	},
+	{
+		path: '/api*',
+		name: 'API',
+		component: API
 	}
 	// {
 	// 	path: '*',
