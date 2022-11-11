@@ -79,6 +79,8 @@ import { ChatWindowSettingsInterface } from '@/interfaces/settings';
 import { MessageDBInterface } from '@/interfaces/message';
 import { remote } from 'electron';
 import { sleep } from '@/utils/sleep';
+import { BTTVStore } from '@/stores/bttv.store';
+import { BTTVUserEmotesInterface } from '@/interfaces/bttv';
 
 const serverPort = 5000;
 const serverAdress = '192.168.0.211';
@@ -118,6 +120,9 @@ export default Vue.extend({
 						switch (data.type) {
 							case 'CONNECT':
 								this.settings = data.params.settings as ChatWindowSettingsInterface;
+								let bttvGlobalEmotes = data.params.settings.bttvGlobalEmotes;
+								let bttvUserEmotes = data.params.settings.bttvUserEmotes as BTTVUserEmotesInterface;
+								BTTVStore.setEmotes(bttvGlobalEmotes, bttvUserEmotes);
 								break;
 						}
 						break;
